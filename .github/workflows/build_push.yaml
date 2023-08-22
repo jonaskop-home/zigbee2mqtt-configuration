@@ -1,0 +1,46 @@
+name: Package and push helm chart
+
+on: push
+
+jobs:
+  version:
+    runs-on: ubuntu-22.04
+    name: Set Version
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.set_version.outputs.version }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set version
+        id: set_version
+        uses: jonasKop-home/github-actions/set-version@main
+
+  package_helm:
+    runs-on: ubuntu-22.04
+    name: Package helm chart
+    permissions:
+      packages: write
+    needs: version
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - run: echo version ${{ needs.version.outputs.version }}
+
+      - name: Login to Google Cloud
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Package Helm chart
+        uses: jonaskop-home/github-actions/package-helm-chart@main
+        with:
+          chart: helm/mosquitto
+          version: ${{ needs.version.outputs.version }}
+          repository: ${{ vars.OCI_REPOSITORY }}
+          gcp_credentials: ${{ secrets.GCP_CREDENTIALS }}

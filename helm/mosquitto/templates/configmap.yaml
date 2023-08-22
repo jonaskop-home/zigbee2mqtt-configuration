@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}
+data:
+  mosquitto.conf: |-
+    allow_anonymous   false
+    listener          1883
+    password_file     /mosquitto/passwd

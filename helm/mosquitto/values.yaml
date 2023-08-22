@@ -1,0 +1,13 @@
+image:
+  registry: docker.io
+  repository: eclipse-mosquitto
+  tag: "2.0.16"
+
+ingress:
+  hostname: mosquitto.example.com
+  annotations: {}
+
+config:
+  mosquitto:
+    username: "{{ mosquittoUsername }}"
+    password: "{{ mosquittoPassword }}"

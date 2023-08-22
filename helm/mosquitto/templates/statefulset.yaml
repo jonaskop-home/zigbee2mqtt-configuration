@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    {{- include "mosquitto.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "mosquitto.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mosquitto.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsUser: 1883
+        runAsGroup: 1883
+      initContainers:
+        - name: password-init
+          image: {{ include "mosquitto.image" . }}
+          command: 
+            [
+              "mosquitto_passwd",
+              "-b",
+              "-c",
+              "/mosquitto/passwd",
+              "$(MOSQUITTO_USERNAME)",
+              "$(MOSQUITTO_PASSWORD)",
+            ]
+          envFrom:
+            - secretRef:
+                name: {{ .Chart.Name }}-init
+          volumeMounts:
+            - name: mosquitto
+              mountPath: /mosquitto
+      containers:
+        - name: mosquitto
+          image: {{ include "mosquitto.image" . }}
+          volumeMounts:
+            - name: mosquitto
+              mountPath: /mosquitto/passwd
+              subPath: passwd
+              readOnly: true
+            - name: config
+              mountPath: "/mosquitto/config/mosquitto.conf"
+              subPath: mosquitto.conf
+          ports:
+            - name: mqtt
+              containerPort: 1883
+              protocol: TCP
+      volumes:
+        - name: mosquitto
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}
