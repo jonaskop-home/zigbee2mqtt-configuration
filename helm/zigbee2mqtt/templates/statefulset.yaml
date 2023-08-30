@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    {{- include "zigbee2mqtt.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "zigbee2mqtt.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "zigbee2mqtt.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsUser: 1883
+        runAsGroup: 1883
+      initContainers:
+        - name: create-users
+          image: {{ include "zigbee2mqtt.image" . }}
+          command:
+          - sh
+          - -c
+          - |
+            set -eu
+            addgroup "$NAME" -g "$ID"
+            adduser "$NAME" -u "$ID" -G "$NAME" -D -H
+            cp -rf /etc/passwd /etc/group /init-tmp/
+            chown -R "$NAME:$NAME" /init-tmp
+          env:
+            - name: NAME
+              value: zigbee2mqtt
+            - name: ID
+              value: "1000"
+          volumeMounts:
+            - name: init-tmp
+              mountPath: /init-tmp
+      containers:
+        - name: mosquitto
+          image: {{ include "zigbee2mqtt.image" . }}
+          volumeMounts:
+            - name: init-tmp
+              mountPath: /etc/passwd
+              subPath: passwd
+            - name: init-tmp
+              mountPath: /etc/group
+              subPath: group
+            - name: data
+              mountPath: /app/data
+            - name: config
+              mountPath: /app/data/configuration.yaml
+              subPath: configuration.yaml
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+      volumes:
+        - name: mosquitto
+          emptyDir: {}
+        - name: config
+          secret:
+            secretName: {{ .Chart.Name }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-data

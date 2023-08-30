@@ -1,1 +1,1 @@
-# Mosquitto Configuration
+# Zigbee2MQTT configuration

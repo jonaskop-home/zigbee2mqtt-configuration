@@ -30,17 +30,10 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - run: echo version ${{ needs.version.outputs.version }}
-
-      - name: Login to Google Cloud
-        uses: "google-github-actions/auth@v1"
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-
       - name: Package Helm chart
         uses: jonaskop-home/github-actions/package-helm-chart@main
         with:
-          chart: helm/mosquitto
+          chart: helm/zigbee2mqtt
           version: ${{ needs.version.outputs.version }}
           repository: ${{ vars.OCI_REPOSITORY }}
-          gcp_credentials: ${{ secrets.GCP_CREDENTIALS }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

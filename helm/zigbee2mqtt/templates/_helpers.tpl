@@ -1,16 +1,16 @@
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "mosquitto.chart" -}}
+{{- define "zigbee2mqtt.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "mosquitto.labels" -}}
-helm.sh/chart: {{ include "mosquitto.chart" . }}
-{{ include "mosquitto.selectorLabels" . }}
+{{- define "zigbee2mqtt.labels" -}}
+helm.sh/chart: {{ include "zigbee2mqtt.chart" . }}
+{{ include "zigbee2mqtt.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -20,7 +20,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "mosquitto.selectorLabels" -}}
+{{- define "zigbee2mqtt.selectorLabels" -}}
 app.kubernetes.io/name: {{ .Chart.Name }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
@@ -28,7 +28,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{/*
 Container image
 */}}
-{{- define "mosquitto.image" -}}
+{{- define "zigbee2mqtt.image" -}}
 {{- $registryName := .Values.image.registry -}}
 {{- $repositoryName := .Values.image.repository -}}
 {{- $tag := .Values.image.tag | default .Chart.Version -}}
