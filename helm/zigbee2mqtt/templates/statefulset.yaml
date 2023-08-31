@@ -16,9 +16,6 @@ spec:
       {{- with .Values.nodeName }}
       nodeName: {{ . }}
       {{- end }}
-      securityContext:
-        runAsUser: 1883
-        runAsGroup: 1883
       initContainers:
         - name: create-users
           image: {{ include "zigbee2mqtt.image" . }}
@@ -41,6 +38,9 @@ spec:
               mountPath: /init-tmp
       containers:
         - name: mosquitto
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
           image: {{ include "zigbee2mqtt.image" . }}
           volumeMounts:
             - name: init-tmp
