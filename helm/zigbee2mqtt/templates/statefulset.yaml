@@ -27,7 +27,7 @@ spec:
             addgroup "$NAME" -g "$ID"
             adduser "$NAME" -u "$ID" -G "$NAME" -D -H
             cp -rf /etc/passwd /etc/group /init-tmp/
-            chown -R "$NAME:$NAME" /init-tmp
+            chown -R "$NAME:$NAME" /init-tmp /app
           env:
             - name: NAME
               value: zigbee2mqtt
