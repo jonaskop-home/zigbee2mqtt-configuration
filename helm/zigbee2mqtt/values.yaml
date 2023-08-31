@@ -3,6 +3,9 @@ image:
   repository: koenkk/zigbee2mqtt
   tag: "1.32.2"
 
+# Node to run the pod on
+nodeName: ""
+
 config:
   permitJoin: true
   mqtt:

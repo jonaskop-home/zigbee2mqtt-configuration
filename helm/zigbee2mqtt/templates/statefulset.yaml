@@ -13,6 +13,9 @@ spec:
       labels:
         {{- include "zigbee2mqtt.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.nodeName }}
+      nodeName: {{ . }}
+      {{- end }}
       securityContext:
         runAsUser: 1883
         runAsGroup: 1883
