@@ -59,6 +59,8 @@ spec:
               containerPort: 8080
               protocol: TCP
       volumes:
+        - name: init-tmp
+          emptyDir: {}
         - name: mosquitto
           emptyDir: {}
         - name: config
