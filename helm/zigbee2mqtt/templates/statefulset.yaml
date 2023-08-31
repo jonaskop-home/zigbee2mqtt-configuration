@@ -26,8 +26,8 @@ spec:
             set -eu
             addgroup "$NAME" -g "$ID"
             adduser "$NAME" -u "$ID" -G "$NAME" -D -H
-            cp -rf /etc/passwd /etc/group /init-tmp/
-            chown -R "$NAME:$NAME" /init-tmp /app
+            cp -rf /etc/passwd /etc/group /app /init-tmp/
+            chown -R "$NAME:$NAME" /init-tmp
           env:
             - name: NAME
               value: zigbee2mqtt
@@ -49,6 +49,9 @@ spec:
             - name: init-tmp
               mountPath: /etc/group
               subPath: group
+            - name: init-tmp
+              mountPath: /app
+              subPath: app
             - name: data
               mountPath: /app/data
             - name: config
@@ -69,3 +72,5 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ .Chart.Name }}-data
+      securityContext:
+        fsGroup: 1000
