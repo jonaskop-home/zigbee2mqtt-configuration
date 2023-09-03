@@ -26,7 +26,7 @@ spec:
             set -eu
             addgroup "$NAME" -g "$ID"
             adduser "$NAME" -u "$ID" -G "$NAME" -D -H
-            cp -rf /etc/passwd /etc/group /app /init-tmp/
+            cp -rfp /etc/passwd /etc/group /app /tmp/configuration.yaml /init-tmp/
             chown -R "$NAME:$NAME" /init-tmp
           env:
             - name: NAME
@@ -36,6 +36,9 @@ spec:
           volumeMounts:
             - name: init-tmp
               mountPath: /init-tmp
+            - name: config
+              mountPath: /tmp/configuration.yaml
+              subPath: configuration.yaml
       containers:
         - name: mosquitto
           securityContext:
@@ -52,11 +55,11 @@ spec:
             - name: init-tmp
               mountPath: /app
               subPath: app
+            - name: init-tmp
+              mountPath: /app/configuration.yaml
+              subPath: configuration.yaml
             - name: data
               mountPath: /app/data
-            - name: config
-              mountPath: /app/data/configuration.yaml
-              subPath: configuration.yaml
           ports:
             - name: http
               containerPort: 8080
