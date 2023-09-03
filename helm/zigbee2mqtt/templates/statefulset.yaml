@@ -44,6 +44,7 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
+            privileged: true
           image: {{ include "zigbee2mqtt.image" . }}
           volumeMounts:
             - name: init-tmp
@@ -60,6 +61,8 @@ spec:
               subPath: configuration.yaml
             - name: data
               mountPath: /app/data
+            - name: ttyacm
+              mountPath: /dev/ttyACM0
           ports:
             - name: http
               containerPort: 8080
@@ -75,5 +78,8 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ .Chart.Name }}-data
+        - name: ttyacm
+          hostPath:
+            path: /dev/ttyACM0
       securityContext:
         fsGroup: 1000
