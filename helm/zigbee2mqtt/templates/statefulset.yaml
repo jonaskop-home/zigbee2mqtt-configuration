@@ -40,7 +40,7 @@ spec:
               mountPath: /tmp/configuration.yaml
               subPath: configuration.yaml
       containers:
-        - name: mosquitto
+        - name: zigbee2mqtt
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
@@ -69,8 +69,6 @@ spec:
               protocol: TCP
       volumes:
         - name: init-tmp
-          emptyDir: {}
-        - name: mosquitto
           emptyDir: {}
         - name: config
           secret:
