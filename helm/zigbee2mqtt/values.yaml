@@ -13,3 +13,4 @@ config:
     server: mqtt://mosquitto.mosquitto.svc.cluster.local
     username: "not_set"
     password: "not_set"
+  devices: {}
